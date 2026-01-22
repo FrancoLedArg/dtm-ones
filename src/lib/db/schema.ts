@@ -1,5 +1,14 @@
-import { pgTable, pgEnum, serial, text, integer, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import {
+  pgTable,
+  pgEnum,
+  serial,
+  text,
+  integer,
+  varchar,
+  timestamp,
+  boolean,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
 // Better Auth Entities
 
@@ -56,10 +65,10 @@ export const verification = pgTable("verification", {
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
+    () => /* @__PURE__ */ new Date(),
   ),
   updatedAt: timestamp("updated_at").$defaultFn(
-    () => /* @__PURE__ */ new Date()
+    () => /* @__PURE__ */ new Date(),
   ),
 });
 
@@ -68,8 +77,12 @@ export const verification = pgTable("verification", {
 export const players = pgTable("players", {
   id: serial("id").primaryKey(),
   fullName: varchar("full_name", { length: 150 }),
-  category: integer("category_id").references(() => categories.id).notNull(),
-  position: integer("position_id").references(() => positions.id).notNull(),
+  category: integer("category_id")
+    .references(() => categories.id)
+    .notNull(),
+  position: integer("position_id")
+    .references(() => positions.id)
+    .notNull(),
   height: varchar("height", { length: 20 }),
   dateOfBirth: varchar("date_of_birth", { length: 50 }),
   nationality: varchar("nationality", { length: 100 }),
@@ -80,13 +93,26 @@ export const players = pgTable("players", {
 
 export const playerRelation = relations(players, ({ one, many }) => ({
   playerMedia: many(playerMedia),
+  category: one(categories, {
+    fields: [players.category],
+    references: [categories.id],
+  }),
+  position: one(positions, {
+    fields: [players.position],
+    references: [positions.id],
+  }),
 }));
 
-export const playerMediaTypes = pgEnum("player_media_types", ["image", "video"]);
+export const playerMediaTypes = pgEnum("player_media_types", [
+  "image",
+  "video",
+]);
 
 export const playerMedia = pgTable("player_media", {
   id: serial("id").primaryKey(),
-  playerId: integer("player_id").references(() => players.id).notNull(),
+  playerId: integer("player_id")
+    .references(() => players.id)
+    .notNull(),
   mediaType: playerMediaTypes("media_type").notNull(),
   url: text("url").notNull(),
   description: text("description"),
@@ -118,4 +144,3 @@ export const positions = pgTable("positions", {
 export const positionsRelation = relations(positions, ({ many }) => ({
   players: many(players),
 }));
-
