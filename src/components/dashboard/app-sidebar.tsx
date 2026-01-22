@@ -15,20 +15,28 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { UsersIcon, SignOutIcon, HouseIcon } from "@phosphor-icons/react";
+import {
+  UsersIcon,
+  SignOutIcon,
+  HouseIcon,
+  FolderIcon,
+} from "@phosphor-icons/react";
 import { authClient } from "@/lib/auth/client";
 import { useRouter } from "next/navigation";
 
+// Components
+import { NavUser } from "@/components/dashboard/nav-user";
+
 const menuItems = [
   {
-    title: "Inicio",
+    title: "Jugadores",
     url: "/dashboard",
-    icon: HouseIcon,
+    icon: UsersIcon,
   },
   {
-    title: "Jugadores",
-    url: "/dashboard/players",
-    icon: UsersIcon,
+    title: "Categorías",
+    url: "/dashboard/categories",
+    icon: FolderIcon,
   },
 ];
 
@@ -43,7 +51,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   };
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="offExamples" {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
           <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-md">
@@ -81,17 +89,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={handleSignOut}
-                  tooltip="Cerrar Sesión"
-                >
-                  <SignOutIcon />
-                  <span>Cerrar Sesión</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
+            <NavUser />
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>

@@ -1,7 +1,7 @@
 // Next
 import { redirect } from "next/navigation";
 
-// Utils
+// Hooks
 import { getSession } from "@/utils/get-session";
 
 // Components
@@ -25,7 +25,8 @@ export default async function Layout({
     <SidebarProvider
       style={
         {
-          "--sidebar-width": "16rem",
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
       }
     >
