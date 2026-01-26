@@ -44,7 +44,7 @@ export default async function Page() {
               <Link href="/dashboard/positions">Agregar posición</Link>
             </Button>
             <Button asChild>
-              <Link href="/dashboard/categories">Agregar categoría</Link>
+              <Link href="/dashboard/categories/create">Agregar categoría</Link>
             </Button>
           </EmptyContent>
         </Empty>

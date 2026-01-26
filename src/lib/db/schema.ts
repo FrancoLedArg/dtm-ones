@@ -87,8 +87,12 @@ export const players = pgTable("players", {
   dateOfBirth: varchar("date_of_birth", { length: 50 }),
   nationality: varchar("nationality", { length: 100 }),
   lastClub: varchar("last_club", { length: 150 }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
 });
 
 export const playerRelation = relations(players, ({ one, many }) => ({
@@ -127,8 +131,14 @@ export const playerMediaRelation = relations(playerMedia, ({ one }) => ({
 
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 50 }).notNull().unique(),
   name: varchar("name", { length: 100 }).notNull(),
+  bannerUrl: text("banner_url"),
+  createdAt: timestamp("created_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
+  updatedAt: timestamp("updated_at").$defaultFn(
+    () => /* @__PURE__ */ new Date(),
+  ),
 });
 
 export const categoriesRelation = relations(categories, ({ many }) => ({

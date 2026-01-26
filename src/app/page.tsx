@@ -1,5 +1,10 @@
-import { ComponentExample } from "@/components/component-example";
+// Next
+import Link from "next/link";
 
 export default function Page() {
-  return <ComponentExample />;
+  return (
+    <div>
+      <Link href="/dashboard">Dashboard</Link>
+    </div>
+  );
 }
