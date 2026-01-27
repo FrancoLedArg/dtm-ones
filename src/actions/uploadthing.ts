@@ -15,7 +15,9 @@ export const deleteUploadThingFile = actionClient
   .metadata({ actionName: "deleteUploadThingFile" })
   .inputSchema(deleteFileSchema)
   .action(async ({ parsedInput: { imageUrl } }) => {
-    await utapi.deleteFiles(imageUrl);
+    const deletedFile = await utapi.deleteFiles(imageUrl);
 
-    return { success: true };
+    console.log(deletedFile);
+
+    return deletedFile;
   });

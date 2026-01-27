@@ -30,11 +30,9 @@ import SubmitButton from "@/components/form/submit-button";
 type FormValues = z.infer<typeof schema>;
 
 export default function Form({
-  categories,
-  positions,
+  playerCategories,
 }: {
-  categories: { id: number; name: string; slug: string }[];
-  positions: { id: number; name: string; slug: string }[];
+  playerCategories: { playerId: number; categoryId: number }[];
 }) {
   const router = useRouter();
 

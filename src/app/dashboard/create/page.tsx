@@ -22,10 +22,9 @@ import CreatePlayerForm from "@/components/create-player-form";
 import { FolderOpenIcon } from "@phosphor-icons/react/ssr";
 
 export default async function Page() {
-  const categories = await db.query.categories.findMany();
-  const positions = await db.query.positions.findMany();
+  const playerCategories = await db.query.playerCategories.findMany();
 
-  if (categories.length === 0 || positions.length === 0) {
+  if (playerCategories.length === 0) {
     return (
       <main>
         <Empty>
@@ -54,7 +53,7 @@ export default async function Page() {
 
   return (
     <main>
-      <CreatePlayerForm categories={categories} positions={positions} />
+      <CreatePlayerForm playerCategories={playerCategories} />
     </main>
   );
 }

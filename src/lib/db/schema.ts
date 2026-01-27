@@ -7,6 +7,7 @@ import {
   varchar,
   timestamp,
   boolean,
+  primaryKey,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -77,11 +78,8 @@ export const verification = pgTable("verification", {
 export const players = pgTable("players", {
   id: serial("id").primaryKey(),
   fullName: varchar("full_name", { length: 150 }),
-  category: integer("category_id")
+  categoryId: integer("category_id")
     .references(() => categories.id)
-    .notNull(),
-  position: integer("position_id")
-    .references(() => positions.id)
     .notNull(),
   height: varchar("height", { length: 20 }),
   dateOfBirth: varchar("date_of_birth", { length: 50 }),
@@ -97,14 +95,7 @@ export const players = pgTable("players", {
 
 export const playerRelation = relations(players, ({ one, many }) => ({
   playerMedia: many(playerMedia),
-  category: one(categories, {
-    fields: [players.category],
-    references: [categories.id],
-  }),
-  position: one(positions, {
-    fields: [players.position],
-    references: [positions.id],
-  }),
+  playerCategories: many(playerCategories),
 }));
 
 export const playerMediaTypes = pgEnum("player_media_types", [
@@ -145,12 +136,29 @@ export const categoriesRelation = relations(categories, ({ many }) => ({
   players: many(players),
 }));
 
-export const positions = pgTable("positions", {
-  id: serial("id").primaryKey(),
-  slug: varchar("slug", { length: 50 }).notNull().unique(),
-  name: varchar("name", { length: 100 }).notNull(),
-});
+export const playerCategories = pgTable(
+  "player_categories",
+  {
+    playerId: integer("player_id")
+      .references(() => players.id)
+      .notNull(),
+    categoryId: integer("category_id")
+      .references(() => categories.id)
+      .notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.playerId, table.categoryId] })],
+);
 
-export const positionsRelation = relations(positions, ({ many }) => ({
-  players: many(players),
-}));
+export const playerCategoriesRelation = relations(
+  playerCategories,
+  ({ one }) => ({
+    player: one(players, {
+      fields: [playerCategories.playerId],
+      references: [players.id],
+    }),
+    category: one(categories, {
+      fields: [playerCategories.categoryId],
+      references: [categories.id],
+    }),
+  }),
+);

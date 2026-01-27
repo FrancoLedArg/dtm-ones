@@ -35,7 +35,6 @@ import { InfoIcon, TrashIcon } from "@phosphor-icons/react";
 
 export default function SingleImageField({
   label,
-  imageUrl,
 }: {
   label: string;
   imageUrl?: string;
@@ -74,12 +73,15 @@ export default function SingleImageField({
   });
 
   const { execute, isExecuting } = useAction(deleteUploadThingFile, {
-    onSuccess: () => {
+    onSuccess: (res) => {
+      console.log(res);
       toast.success("Imagen eliminada correctamente");
       setImage(null);
     },
-    onError: () => {
-      toast.error("Error al eliminar la imagen");
+    onError: ({ error }) => {
+      toast.error("Error al eliminar la imagen", {
+        description: error.serverError,
+      });
     },
   });
 
