@@ -11,12 +11,7 @@ export default function SubmitButton({
   isExecuting: boolean;
 }) {
   return (
-    <Button
-      type="submit"
-      variant="outline"
-      disabled={isExecuting}
-      aria-label="submit"
-    >
+    <Button type="submit" disabled={isExecuting} aria-label="submit">
       {isExecuting ? <Spinner /> : label}
     </Button>
   );

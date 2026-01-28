@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/auth/session";
+import { getSession } from "@/utils/get-session";
 import { SignInForm } from "@/components/auth/signin-form";
 
 export default async function SignInPage() {

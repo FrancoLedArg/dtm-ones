@@ -1,6 +1,7 @@
 "use client";
 
 // Next
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 // React Hook Form
@@ -15,8 +16,13 @@ import { createPlayer } from "@/actions/players";
 import { createPlayerSchema as schema } from "@/lib/validation/players";
 
 // Shadcn
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { FieldGroup, FieldSet, FieldSeparator } from "@/components/ui/field";
+import {
+  FieldGroup,
+  FieldSet,
+  FieldLegend,
+  FieldDescription,
+} from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 // Zod
@@ -27,13 +33,25 @@ import TextField from "@/components/form/text-field";
 import SelectField from "@/components/form/select-field";
 import SubmitButton from "@/components/form/submit-button";
 
+// Phosphor
+import { XIcon } from "@phosphor-icons/react/dist/ssr";
+
 type FormValues = z.infer<typeof schema>;
 
-export default function Form({
-  playerCategories,
-}: {
-  playerCategories: { playerId: number; categoryId: number }[];
-}) {
+interface CategoryShape {
+  id: number;
+  name: string;
+}
+
+interface Props {
+  positions: CategoryShape[];
+  roles: CategoryShape[];
+  contractStatuses: CategoryShape[];
+  availabilityStatuses: CategoryShape[];
+  developmentStages: CategoryShape[];
+}
+
+export default function Form(props: Props) {
   const router = useRouter();
 
   const { execute, isExecuting } = useAction(createPlayer, {
@@ -52,8 +70,6 @@ export default function Form({
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
-      category: 0,
-      position: 0,
       height: "",
       dateOfBirth: "",
       nationality: "",
@@ -67,41 +83,123 @@ export default function Form({
     execute(data);
   };
 
+  const {
+    positions,
+    roles,
+    contractStatuses,
+    availabilityStatuses,
+    developmentStages,
+  } = props;
+
+  type FormStepConfig = {
+    title: string;
+    description: string;
+    renderFields: () => React.ReactNode;
+  };
+
+  const stepConfigs: FormStepConfig[] = [
+    {
+      title: "Datos Personales",
+      description: "Información basica sobre la identidad del jugador.",
+      renderFields: () => (
+        <>
+          <TextField
+            name="fullName"
+            label="Nombre Completo"
+            placeholder="Juan Pérez"
+          />
+          <TextField
+            name="dateOfBirth"
+            label="Fecha de Nacimiento"
+            placeholder="DD/MM/YYYY"
+          />
+          <TextField
+            name="nationality"
+            label="Nacionalidad"
+            placeholder="Argentina"
+          />
+        </>
+      ),
+    },
+    {
+      title: "Perfil Deportivo",
+      description:
+        "Informacion clave sobre su rol y características en la cancha.",
+      renderFields: () => (
+        <>
+          <SelectField name="position" label="Posición" options={positions} />
+          <SelectField name="role" label="Rol" options={roles} />
+          <TextField name="height" label="Altura" />
+        </>
+      ),
+    },
+    {
+      title: "Situacion Profesional",
+      description: "Estado actual del jugador y disponibilidad para competir.",
+      renderFields: () => (
+        <>
+          <SelectField
+            name="contractStatus"
+            label="Estado de Contrato"
+            options={contractStatuses}
+          />
+          <SelectField
+            name="availabilityStatus"
+            label="Disponibilidad"
+            options={availabilityStatuses}
+          />
+          <SelectField
+            name="developmentStage"
+            label="Etapa de Desarrollo"
+            options={developmentStages}
+          />
+        </>
+      ),
+    },
+  ];
+
   return (
-    <Card className="w-full sm:max-w-md">
-      <CardHeader>
-        <CardTitle>Crear Jugador</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <FieldSet>
-                <TextField name="fullName" label="Nombre Completo" />
-                <SelectField
-                  name="category"
-                  label="Categoría"
-                  options={categories}
-                />
-                <SelectField
-                  name="position"
-                  label="Posición"
-                  options={positions}
-                />
-                <TextField name="height" label="Altura" />
-                <TextField
-                  name="dateOfBirth"
-                  label="Fecha de Nacimiento"
-                  placeholder="DD/MM/YYYY"
-                />
-                <TextField name="nationality" label="Nacionalidad" />
-                <TextField name="lastClub" label="Último Club" />
-                <SubmitButton label="Crear Jugador" isExecuting={isExecuting} />
-              </FieldSet>
-            </FieldGroup>
-          </form>
-        </FormProvider>
-      </CardContent>
-    </Card>
+    <div className="p-10 flex flex-col gap-8">
+      <div className="flex justify-between items-center gap-2">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-2xl font-bold">Crear Jugador</h1>
+          <p className="text-sm text-muted-foreground">
+            Crea un nuevo jugador para tu equipo.
+          </p>
+        </div>
+        <Button asChild>
+          <Link href="/dashboard">
+            <XIcon size={24} />
+            Cancelar
+          </Link>
+        </Button>
+      </div>
+
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+          {stepConfigs.map((step, index) => (
+            <FieldSet key={index} className="flex flex-row items-stretch gap-4">
+              <div className="flex flex-col justify-center items-center gap-2">
+                <div className="w-8 h-8 text-sm bg-muted rounded-full flex items-center justify-center">
+                  <span className="text-xs">{index + 1}</span>
+                </div>
+                <div className="w-[1px] flex-1 bg-muted" />
+              </div>
+
+              <div className="w-full flex flex-col gap-6">
+                <div>
+                  <FieldLegend>{step.title}</FieldLegend>
+                  <FieldDescription>{step.description}</FieldDescription>
+                </div>
+
+                <FieldGroup>{step.renderFields()}</FieldGroup>
+              </div>
+            </FieldSet>
+          ))}
+
+          <SubmitButton label="Crear Jugador" isExecuting={isExecuting} />
+        </form>
+      </FormProvider>
+    </div>
   );
 }

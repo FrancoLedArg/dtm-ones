@@ -21,8 +21,8 @@ export default function SelectField({
   label: string;
   disabled?: boolean;
   options: {
-    label: string;
-    value: string;
+    id: number;
+    name: string;
   }[];
 }) {
   const {
@@ -34,15 +34,15 @@ export default function SelectField({
   const error = get(errors, name)?.message as string | undefined;
 
   return (
-    <Field>
+    <Field className="flex flex-col gap-2">
       <FieldLabel htmlFor={label}>{label}</FieldLabel>
       <Combobox>
         <ComboboxInput
           type="text"
           id={name}
-          placeholder={label}
+          placeholder={options.length === 0 ? "No hay opciones" : label}
           autoComplete="off"
-          disabled={disabled}
+          disabled={disabled || options.length === 0}
           {...register(name, {
             onChange: async () => {
               await trigger(name);
@@ -50,11 +50,17 @@ export default function SelectField({
           })}
         />
         <ComboboxContent>
-          {options.map((option) => (
-            <ComboboxItem key={option.value} value={option.value}>
-              {option.label}
+          {options.length > 0 ? (
+            options.map((option) => (
+              <ComboboxItem key={option.id} value={option.id.toString()}>
+                {option.name}
+              </ComboboxItem>
+            ))
+          ) : (
+            <ComboboxItem key="no-options" value="no-options">
+              No se encontraron opciones
             </ComboboxItem>
-          ))}
+          )}
         </ComboboxContent>
       </Combobox>
       {error && <FieldError errors={[{ message: error as string }]} />}

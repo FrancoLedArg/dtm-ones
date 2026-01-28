@@ -25,7 +25,7 @@ export default function TextField({
   const error = get(errors, name)?.message as string | undefined;
 
   return (
-    <Field>
+    <Field className="flex flex-col gap-2">
       <FieldLabel htmlFor={label}>{label}</FieldLabel>
       <Input
         type="text"
