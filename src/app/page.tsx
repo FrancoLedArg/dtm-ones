@@ -15,8 +15,11 @@ import Loader from "@/components/landing/loader";
 import Hero from "@/components/landing/hero";
 import About from "@/components/landing/about";
 import Clients from "@/components/landing/clients";
+import Contact from "@/components/landing/contact";
+import Footer from "@/components/landing/footer";
 
-// TODO: Landing Page
+// Styles
+import styles from "./styles.module.scss";
 
 export default function Page() {
   const [isLoading, setIsLoading] = useState(true);
@@ -31,13 +34,17 @@ export default function Page() {
 
   return (
     <ReactLenis root options={{ lerp: 0.05 }}>
-      {
-        // <AnimatePresence mode="wait">{isLoading && <Loader />}</AnimatePresence>
-      }
+      <main className={styles.main}>
+        {
+          // <AnimatePresence mode="wait">{isLoading && <Loader />}</AnimatePresence>
+        }
 
-      <Hero />
-      <About />
-      <Clients />
+        <Hero />
+        <About />
+        <Clients />
+        <Contact />
+        <Footer />
+      </main>
     </ReactLenis>
   );
 }

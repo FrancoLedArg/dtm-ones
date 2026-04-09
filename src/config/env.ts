@@ -1,42 +1,29 @@
-import { createEnv } from "@t3-oss/env-core";
+import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
 export const env = createEnv({
   server: {
-    NODE_ENV: z.enum(["development", "production"]),
+    NODE_ENV: z.enum(["development", "production", "test"]),
     DATABASE_URL: z.url(),
-    BETTER_AUTH_SECRET: z.string().min(1),
-    UPLOADTHING_TOKEN: z.string().min(1),
+  },
+
+  client: {
+    NEXT_PUBLIC_SUPABASE_URL: z.url(),
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
   },
 
   /**
-   * The prefix that client-side variables must have. This is enforced both at
-   * a type-level and at runtime.
+   * Next.js statically analyzes only `NEXT_PUBLIC_*` references; list them here.
+   * Server variables are read from `process.env` at runtime (see env-nextjs).
    */
-  // clientPrefix: "PUBLIC_",
+  experimental__runtimeEnv: {
+    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  },
 
-  // client: {
-  //   PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  // },
-
-  /**
-   * What object holds the environment variables at runtime. This is usually
-   * `process.env` or `import.meta.env`.
-   */
-  runtimeEnv: process.env,
-
-  /**
-   * By default, this library will feed the environment variables directly to
-   * the Zod validator.
-   *
-   * This means that if you have an empty string for a value that is supposed
-   * to be a number (e.g. `PORT=` in a ".env" file), Zod will incorrectly flag
-   * it as a type mismatch violation. Additionally, if you have an empty string
-   * for a value that is supposed to be a string with a default value (e.g.
-   * `DOMAIN=` in an ".env" file), the default value will never be applied.
-   *
-   * In order to solve these issues, we recommend that all new projects
-   * explicitly specify this option as true.
-   */
   emptyStringAsUndefined: true,
+
+  /** Set `SKIP_ENV_VALIDATION=true` only when required (e.g. incomplete CI env). */
+  skipValidation: process.env.SKIP_ENV_VALIDATION === "true",
 });

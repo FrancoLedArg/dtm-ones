@@ -19,6 +19,7 @@
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.100.0",
     "@t3-oss/env-core": "^0.13.10",
+    "@t3-oss/env-nextjs": "^0.13.11",
     "@tanstack/react-table": "^8.21.3",
     "@uploadthing/react": "^7.3.3",
     "better-auth": "^1.4.17",

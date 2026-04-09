@@ -1,0 +1,32 @@
+.container {
+  width: 100%;
+  margin: 200px 0 50px 0;
+  position: relative;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+
+    font-size: 11px;
+    text-transform: uppercase;
+
+    .info {
+      display: flex;
+      gap: 20px;
+    }
+  }
+
+  .logo {
+    width: 100dvw;
+    aspect-ratio: 1/1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -50%);
+
+    opacity: 0.1;
+  }
+}
