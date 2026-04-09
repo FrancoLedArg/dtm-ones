@@ -27,7 +27,11 @@ import { FolderOpenIcon, PlusIcon, UserIcon } from "@phosphor-icons/react/ssr";
 export default async function Page() {
   const allPlayers = await db.query.players.findMany({
     with: {
-      playerCategories: true,
+      playerPositions: true,
+      playerRoles: true,
+      playerContractStatuses: true,
+      playerAvailabilityStatuses: true,
+      playerDevelopmentStages: true,
     },
     orderBy: [desc(players.createdAt)],
   });
@@ -39,7 +43,7 @@ export default async function Page() {
     },
     {
       header: "Categoría",
-      accessorKey: "playerCategories.name",
+      accessorKey: "playerPositions.name",
     },
     {
       header: "Altura",
@@ -76,27 +80,20 @@ export default async function Page() {
           </Button>
         </div>
 
-        <div></div>
+        <Empty className="w-full h-full bg-muted rounded-lg">
+          <EmptyHeader>
+            <EmptyMedia variant="icon" className="bg-primary">
+              <FolderOpenIcon size={48} />
+            </EmptyMedia>
 
-        <div className="w-full h-full flex justify-center items-center bg-muted rounded-lg p-10">
-          <Empty className="bg-white rounded-lg">
-            <EmptyHeader>
-              <EmptyMedia variant="icon">
-                <FolderOpenIcon size={32} />
-              </EmptyMedia>
-
-              <EmptyTitle>No hay jugadores aún</EmptyTitle>
-              <EmptyDescription>
-                No agregaste ningun jugador aún. Comienza agregando uno.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button asChild>
-                <Link href="/dashboard/create">Agregar jugador</Link>
-              </Button>
-            </EmptyContent>
-          </Empty>
-        </div>
+            <EmptyTitle>No hay jugadores aún</EmptyTitle>
+            <EmptyDescription>
+              No agregaste ningun jugador aún.
+              <br />
+              Comienza agregando uno.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       </main>
     );
   }

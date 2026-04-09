@@ -70,6 +70,11 @@ export default function Form(props: Props) {
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
+      position: [],
+      role: [],
+      contractStatus: [],
+      availabilityStatus: [],
+      developmentStage: [],
       height: "",
       dateOfBirth: "",
       nationality: "",
