@@ -8,4 +8,8 @@ import * as schema from "@/lib/db/schema";
 import { env } from "@/config/env";
 
 const sql = neon(env.DATABASE_URL);
-export const db = drizzle({ client: sql, schema });
+export const db = drizzle({
+  client: sql,
+  schema,
+  relations: schema.relations,
+});

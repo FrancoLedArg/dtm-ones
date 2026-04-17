@@ -5,21 +5,11 @@ import { db } from "@/lib/db";
 import CreatePlayerForm from "@/components/create-player-form";
 
 export default async function Page() {
-  const positions = await db.query.positions.findMany();
-  const roles = await db.query.roles.findMany();
-  const contractStatuses = await db.query.contractStatuses.findMany();
-  const availabilityStatuses = await db.query.availabilityStatuses.findMany();
-  const developmentStages = await db.query.developmentStages.findMany();
+  const categories = await db.query.categories.findMany();
 
   return (
     <main>
-      <CreatePlayerForm
-        positions={positions}
-        roles={roles}
-        contractStatuses={contractStatuses}
-        availabilityStatuses={availabilityStatuses}
-        developmentStages={developmentStages}
-      />
+      <CreatePlayerForm categories={categories} />
     </main>
   );
 }

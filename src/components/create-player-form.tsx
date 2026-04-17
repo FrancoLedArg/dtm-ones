@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 // React Hook Form
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 // Next Safe Action
@@ -30,7 +30,6 @@ import { z } from "zod";
 
 // Components
 import TextField from "@/components/form/text-field";
-import SelectField from "@/components/form/select-field";
 import SubmitButton from "@/components/form/submit-button";
 
 // Phosphor
@@ -44,11 +43,58 @@ interface CategoryShape {
 }
 
 interface Props {
-  positions: CategoryShape[];
-  roles: CategoryShape[];
-  contractStatuses: CategoryShape[];
-  availabilityStatuses: CategoryShape[];
-  developmentStages: CategoryShape[];
+  categories: CategoryShape[];
+}
+
+function CategoryPicker({ categories }: { categories: CategoryShape[] }) {
+  const { watch, setValue, getValues } = useFormContext<FormValues>();
+  const playerCategories = watch("playerCategories") ?? [];
+
+  const toggleCategory = (categoryId: number) => {
+    const current = getValues("playerCategories") ?? [];
+    const exists = current.some((c) => c.categoryId === categoryId);
+    setValue(
+      "playerCategories",
+      exists
+        ? current.filter((c) => c.categoryId !== categoryId)
+        : [...current, { categoryId }],
+      { shouldValidate: true, shouldDirty: true },
+    );
+  };
+
+  if (categories.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        No hay categorías en el sistema. Podés crear el jugador y asignar
+        categorías más adelante.
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm font-medium leading-none">Categorías</p>
+      <div className="flex flex-wrap gap-x-4 gap-y-2">
+        {categories.map((cat) => {
+          const checked = playerCategories.some((c) => c.categoryId === cat.id);
+          return (
+            <label
+              key={cat.id}
+              className="flex cursor-pointer items-center gap-2 text-sm"
+            >
+              <input
+                type="checkbox"
+                className="size-4 rounded border border-input accent-primary"
+                checked={checked}
+                onChange={() => toggleCategory(cat.id)}
+              />
+              <span>{cat.name}</span>
+            </label>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 export default function Form(props: Props) {
@@ -70,15 +116,11 @@ export default function Form(props: Props) {
     resolver: zodResolver(schema),
     defaultValues: {
       fullName: "",
-      position: [],
-      role: [],
-      contractStatus: [],
-      availabilityStatus: [],
-      developmentStage: [],
       height: "",
       dateOfBirth: "",
       nationality: "",
       lastClub: "",
+      playerCategories: [],
     },
   });
 
@@ -88,13 +130,7 @@ export default function Form(props: Props) {
     execute(data);
   };
 
-  const {
-    positions,
-    roles,
-    contractStatuses,
-    availabilityStatuses,
-    developmentStages,
-  } = props;
+  const { categories } = props;
 
   type FormStepConfig = {
     title: string;
@@ -104,18 +140,18 @@ export default function Form(props: Props) {
 
   const stepConfigs: FormStepConfig[] = [
     {
-      title: "Datos Personales",
-      description: "Información basica sobre la identidad del jugador.",
+      title: "Datos personales",
+      description: "Identidad básica del jugador.",
       renderFields: () => (
         <>
           <TextField
             name="fullName"
-            label="Nombre Completo"
+            label="Nombre completo"
             placeholder="Juan Pérez"
           />
           <TextField
             name="dateOfBirth"
-            label="Fecha de Nacimiento"
+            label="Fecha de nacimiento"
             placeholder="DD/MM/YYYY"
           />
           <TextField
@@ -127,37 +163,18 @@ export default function Form(props: Props) {
       ),
     },
     {
-      title: "Perfil Deportivo",
+      title: "Perfil y club",
       description:
-        "Informacion clave sobre su rol y características en la cancha.",
+        "Características físicas, último club y categorías en las que participa.",
       renderFields: () => (
         <>
-          <SelectField name="position" label="Posición" options={positions} />
-          <SelectField name="role" label="Rol" options={roles} />
-          <TextField name="height" label="Altura" />
-        </>
-      ),
-    },
-    {
-      title: "Situacion Profesional",
-      description: "Estado actual del jugador y disponibilidad para competir.",
-      renderFields: () => (
-        <>
-          <SelectField
-            name="contractStatus"
-            label="Estado de Contrato"
-            options={contractStatuses}
+          <TextField name="height" label="Altura" placeholder="1,85 m" />
+          <TextField
+            name="lastClub"
+            label="Último club"
+            placeholder="Nombre del club"
           />
-          <SelectField
-            name="availabilityStatus"
-            label="Disponibilidad"
-            options={availabilityStatuses}
-          />
-          <SelectField
-            name="developmentStage"
-            label="Etapa de Desarrollo"
-            options={developmentStages}
-          />
+          <CategoryPicker categories={categories} />
         </>
       ),
     },

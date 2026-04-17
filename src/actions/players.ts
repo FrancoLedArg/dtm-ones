@@ -8,10 +8,7 @@ import { flattenValidationErrors } from "next-safe-action";
 import { db } from "@/lib/db";
 
 // Schema
-import { players, categories, positions } from "@/lib/db/schema";
-
-// Drizzle
-import { desc } from "drizzle-orm";
+import { players, playerCategories } from "@/lib/db/schema";
 
 // Validation Schema
 import { createPlayerSchema } from "@/lib/validation/players";
@@ -24,7 +21,20 @@ export const createPlayer = actionClient
     },
   })
   .action(async ({ parsedInput: data }) => {
-    const newPlayer = await db.insert(players).values(data).returning();
+    const { playerCategories: categoryRows, ...playerRow } = data;
 
-    return newPlayer;
+    return db.transaction(async (tx) => {
+      const [inserted] = await tx.insert(players).values(playerRow).returning();
+
+      if (categoryRows.length > 0) {
+        await tx.insert(playerCategories).values(
+          categoryRows.map((row) => ({
+            playerId: inserted.id,
+            categoryId: row.categoryId,
+          })),
+        );
+      }
+
+      return inserted;
+    });
   });
