@@ -17,11 +17,14 @@ import { createPlayerSchema as schema } from "@/lib/validation/players";
 
 // Shadcn
 import {
-  FieldGroup,
-  FieldSet,
-  FieldLegend,
+  Field,
   FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
 } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
@@ -74,25 +77,31 @@ function CategoryPicker({ categories }: { categories: CategoryShape[] }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="text-sm font-medium leading-none">Categorías</p>
-      <div className="flex flex-wrap gap-x-4 gap-y-2">
-        {categories.map((cat) => {
-          const checked = playerCategories.some((c) => c.categoryId === cat.id);
-          return (
-            <label
-              key={cat.id}
-              className="flex cursor-pointer items-center gap-2 text-sm"
-            >
-              <input
-                type="checkbox"
-                className="size-4 rounded border border-input accent-primary"
-                checked={checked}
-                onChange={() => toggleCategory(cat.id)}
-              />
-              <span>{cat.name}</span>
-            </label>
-          );
-        })}
-      </div>
+      <FieldGroup>
+        <div
+          data-slot="checkbox-group"
+          className="flex flex-wrap gap-x-6 gap-y-3"
+        >
+          {categories.map((cat) => {
+            const checked = playerCategories.some(
+              (c) => c.categoryId === cat.id,
+            );
+            const fieldId = `player-category-${cat.id}`;
+            return (
+              <Field key={cat.id} orientation="horizontal">
+                <Checkbox
+                  id={fieldId}
+                  checked={checked}
+                  onCheckedChange={() => toggleCategory(cat.id)}
+                />
+                <FieldLabel htmlFor={fieldId} className="font-normal">
+                  {cat.name}
+                </FieldLabel>
+              </Field>
+            );
+          })}
+        </div>
+      </FieldGroup>
     </div>
   );
 }
@@ -113,7 +122,7 @@ export default function Form(props: Props) {
   });
 
   const methods = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as never),
     defaultValues: {
       fullName: "",
       height: "",
@@ -131,54 +140,6 @@ export default function Form(props: Props) {
   };
 
   const { categories } = props;
-
-  type FormStepConfig = {
-    title: string;
-    description: string;
-    renderFields: () => React.ReactNode;
-  };
-
-  const stepConfigs: FormStepConfig[] = [
-    {
-      title: "Datos personales",
-      description: "Identidad básica del jugador.",
-      renderFields: () => (
-        <>
-          <TextField
-            name="fullName"
-            label="Nombre completo"
-            placeholder="Juan Pérez"
-          />
-          <TextField
-            name="dateOfBirth"
-            label="Fecha de nacimiento"
-            placeholder="DD/MM/YYYY"
-          />
-          <TextField
-            name="nationality"
-            label="Nacionalidad"
-            placeholder="Argentina"
-          />
-        </>
-      ),
-    },
-    {
-      title: "Perfil y club",
-      description:
-        "Características físicas, último club y categorías en las que participa.",
-      renderFields: () => (
-        <>
-          <TextField name="height" label="Altura" placeholder="1,85 m" />
-          <TextField
-            name="lastClub"
-            label="Último club"
-            placeholder="Nombre del club"
-          />
-          <CategoryPicker categories={categories} />
-        </>
-      ),
-    },
-  ];
 
   return (
     <div className="p-10 flex flex-col gap-8">
@@ -199,25 +160,48 @@ export default function Form(props: Props) {
 
       <FormProvider {...methods}>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
-          {stepConfigs.map((step, index) => (
-            <FieldSet key={index} className="flex flex-row items-stretch gap-4">
-              <div className="flex flex-col justify-center items-center gap-2">
-                <div className="w-8 h-8 text-sm bg-muted rounded-full flex items-center justify-center">
-                  <span className="text-xs">{index + 1}</span>
-                </div>
-                <div className="w-[1px] flex-1 bg-muted" />
-              </div>
+          <FieldSet className="flex flex-col gap-6">
+            <div>
+              <FieldLegend>Datos personales</FieldLegend>
+              <FieldDescription>Identidad básica del jugador.</FieldDescription>
+            </div>
+            <FieldGroup>
+              <TextField
+                name="fullName"
+                label="Nombre completo"
+                placeholder="Juan Pérez"
+              />
+              <TextField
+                name="dateOfBirth"
+                label="Fecha de nacimiento"
+                placeholder="DD/MM/YYYY"
+              />
+              <TextField
+                name="nationality"
+                label="Nacionalidad"
+                placeholder="Argentina"
+              />
+            </FieldGroup>
+          </FieldSet>
 
-              <div className="w-full flex flex-col gap-6">
-                <div>
-                  <FieldLegend>{step.title}</FieldLegend>
-                  <FieldDescription>{step.description}</FieldDescription>
-                </div>
-
-                <FieldGroup>{step.renderFields()}</FieldGroup>
-              </div>
-            </FieldSet>
-          ))}
+          <FieldSet className="flex flex-col gap-6">
+            <div>
+              <FieldLegend>Perfil y club</FieldLegend>
+              <FieldDescription>
+                Características físicas, último club y categorías en las que
+                participa.
+              </FieldDescription>
+            </div>
+            <FieldGroup>
+              <TextField name="height" label="Altura" placeholder="1,85 m" />
+              <TextField
+                name="lastClub"
+                label="Último club"
+                placeholder="Nombre del club"
+              />
+              <CategoryPicker categories={categories} />
+            </FieldGroup>
+          </FieldSet>
 
           <SubmitButton label="Crear Jugador" isExecuting={isExecuting} />
         </form>

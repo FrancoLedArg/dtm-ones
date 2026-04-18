@@ -39,7 +39,7 @@ export default function Contact() {
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema as never),
     defaultValues: {
       email: "",
       message: "",
@@ -105,7 +105,7 @@ export default function Contact() {
             <textarea
               id="message"
               rows={5}
-              placeholder="Write your message…" 
+              placeholder="Write your message…"
               className={styles.fieldTextarea}
               disabled={isExecuting}
               aria-invalid={!!errors.message}

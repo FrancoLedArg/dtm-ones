@@ -1,3 +1,4 @@
+/*
 "use client";
 
 // Next
@@ -138,7 +139,8 @@ export default function SingleImageField({
         <InfoIcon className="size-4" />
         <span>Máximo 4MB</span>
       </FieldDescription>
-      <FieldError>{/*{error && <p>{error.message}</p>}*/}</FieldError>
+      <FieldError>{/*{error && <p>{error.message}</p>}</FieldError>
     </Field>
   );
 }
+*/

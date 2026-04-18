@@ -36,7 +36,7 @@ export function SignInForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignInFormData>({
-    resolver: zodResolver(signInSchema),
+    resolver: zodResolver(signInSchema as never),
   });
 
   const onSubmit = async (data: SignInFormData) => {
