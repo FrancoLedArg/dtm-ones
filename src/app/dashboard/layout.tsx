@@ -1,8 +1,8 @@
 // Next
 import { redirect } from "next/navigation";
 
-// Hooks
-import { getSession } from "@/utils/get-session";
+// Supabase
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // Components
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
@@ -16,11 +16,15 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getSession();
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!session?.user) {
+  if (!user) {
     redirect("/auth/signin");
   }
+
   return (
     <SidebarProvider
       style={

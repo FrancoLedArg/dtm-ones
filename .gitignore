@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/playwright-report/
+/test-results/
 
 # next.js
 /.next/
@@ -19,10 +21,14 @@
 
 # production
 /build
+.turbo/
 
 # misc
 .DS_Store
+Thumbs.db
 *.pem
+.eslintcache
+.idea/
 
 # debug
 npm-debug.log*
@@ -42,4 +48,4 @@ next-env.d.ts
 
 # cursor
 .cursor
-.agents/*
+.agents/**

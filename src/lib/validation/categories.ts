@@ -1,18 +1,22 @@
-// Zod
 import { z } from "zod";
 
-// Schemas
-import { playerCategorySchema } from "@/lib/validation/player-category";
-
 export const categorySchema = z.object({
-  id: z.number().int().positive(),
-  name: z.string().max(100),
+  id: z.uuid(),
+  name: z
+    .string()
+    .trim()
+    .min(1, "El nombre es obligatorio.")
+    .max(100, "Máximo 100 caracteres."),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });
 
-export const createCategorySchema = categorySchema.pick({
-  name: true,
+export const createCategorySchema = z.object({
+  name: z
+    .string()
+    .trim()
+    .min(1, "El nombre es obligatorio.")
+    .max(100, "Máximo 100 caracteres."),
 });
 
-export type Category = z.infer<typeof categorySchema>;
+export type CategoryData = z.infer<typeof categorySchema>;

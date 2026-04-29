@@ -15,26 +15,19 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  UsersIcon,
-  SignOutIcon,
-  HouseIcon,
-  FolderIcon,
-} from "@phosphor-icons/react";
-import { authClient } from "@/lib/auth/client";
-import { useRouter } from "next/navigation";
+import { UsersIcon, HouseIcon, FolderIcon } from "@phosphor-icons/react";
 
 // Components
 import { NavUser } from "@/components/dashboard/nav-user";
 
 const menuItems = [
   {
-    title: "Jugadores",
-    url: "/dashboard",
+    title: "Players",
+    url: "/dashboard/players",
     icon: UsersIcon,
   },
   {
-    title: "Categorías",
+    title: "Categories",
     url: "/dashboard/categories",
     icon: FolderIcon,
   },
@@ -42,13 +35,6 @@ const menuItems = [
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
-  const router = useRouter();
-
-  const handleSignOut = async () => {
-    await authClient.signOut();
-    router.push("/auth/signin");
-    router.refresh();
-  };
 
   return (
     <Sidebar collapsible="offExamples" {...props}>

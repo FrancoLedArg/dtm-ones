@@ -1,14 +1,24 @@
 "use client";
 
-import { useState } from "react";
+// Next
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+
+// React Hook Form
+import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+// Next Safe Action
+import { useAction } from "next-safe-action/hooks";
+import { signIn } from "@/actions/auth";
+
+// Zod
 import { z } from "zod";
-import { authClient } from "@/lib/auth/client";
+
+// Validation Schema
+import { signInSchema as schema } from "@/lib/validation/auth";
+
+// Shadcn
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
@@ -17,51 +27,41 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
-const signInSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
-});
+// Components
+import TextField from "@/components/form/text-field";
+import PasswordField from "@/components/form/password-field";
 
-type SignInFormData = z.infer<typeof signInSchema>;
+type FormValues = z.infer<typeof schema>;
 
 export function SignInForm() {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInFormData>({
-    resolver: zodResolver(signInSchema as never),
-  });
-
-  const onSubmit = async (data: SignInFormData) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const result = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
-      });
-
-      if (result.error) {
-        setError(result.error.message || "Error al iniciar sesión");
-        return;
-      }
-
-      // Redirect to dashboard on success
+  const { execute, isExecuting } = useAction(signIn, {
+    onSuccess: ({ data }) => {
+      toast.success(data?.message ?? "Error al iniciar sesión");
       router.push("/dashboard");
       router.refresh();
-    } catch (err) {
-      setError("Error inesperado. Por favor, inténtelo de nuevo.");
-    } finally {
-      setIsLoading(false);
-    }
+    },
+    onError: ({ error: actionError }) => {
+      toast.error(actionError.serverError ?? "Error al iniciar sesión");
+    },
+  });
+
+  const methods = useForm<FormValues>({
+    resolver: zodResolver(schema as never),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const { handleSubmit } = methods;
+
+  const onSubmit = (data: FormValues) => {
+    execute(data);
   };
 
   return (
@@ -72,56 +72,25 @@ export function SignInForm() {
           Ingresa tu email y contraseña para continuar
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <CardContent className="space-y-4">
-          {error && (
-            <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
-              {error}
-            </div>
-          )}
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="p-4 flex flex-col gap-10"
+        >
+          <CardContent className="space-y-4">
+            <TextField name="email" label="Email" placeholder="tu@email.com" />
+            <PasswordField name="password" label="Contraseña" />
+          </CardContent>
 
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="tu@email.com"
-              {...register("email")}
-              aria-invalid={errors.email ? "true" : "false"}
-            />
-            {errors.email && (
-              <p className="text-destructive text-sm">{errors.email.message}</p>
-            )}
-          </div>
+          <Separator />
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Contraseña</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              {...register("password")}
-              aria-invalid={errors.password ? "true" : "false"}
-            />
-            {errors.password && (
-              <p className="text-destructive text-sm">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col gap-4">
-          <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Iniciando sesión..." : "Iniciar Sesión"}
-          </Button>
-          <p className="text-muted-foreground text-center text-sm">
-            ¿No tienes una cuenta?{" "}
-            <Link href="/auth/signup" className="text-primary hover:underline">
-              Regístrate aquí
-            </Link>
-          </p>
-        </CardFooter>
-      </form>
+          <CardFooter className="flex flex-col gap-4">
+            <Button type="submit" className="w-full" disabled={isExecuting}>
+              {isExecuting ? "Iniciando sesión..." : "Iniciar Sesión"}
+            </Button>
+          </CardFooter>
+        </form>
+      </FormProvider>
     </Card>
   );
 }
