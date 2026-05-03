@@ -10,41 +10,28 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // Schema
-import { players, playerMedia } from "@/lib/db/schema";
+import { landingMedia } from "@/lib/db/schema";
 
 // Supabase
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 // Validation Schema
 import {
-  createPlayerMediaSchema,
-  deletePlayerMediaSchema,
-} from "@/lib/validation/player-media";
+  createLandingMediaSchema,
+  deleteLandingMediaSchema,
+} from "@/lib/validation/landing-media";
 
-export const createPlayerMedia = actionClient
-  .metadata({ actionName: "createPlayerMedia" })
-  .inputSchema(createPlayerMediaSchema, {
+export const createLandingMedia = actionClient
+  .metadata({ actionName: "createLandingMedia" })
+  .inputSchema(createLandingMediaSchema, {
     handleValidationErrorsShape: async (errors) => {
       return flattenValidationErrors(errors).fieldErrors;
     },
   })
   .action(async ({ parsedInput }) => {
-    const { playerId, ...data } = parsedInput;
+    await db.insert(landingMedia).values(parsedInput);
 
-    const existingPlayer = await db.query.players.findFirst({
-      where: eq(players.id, playerId),
-    });
-
-    if (!existingPlayer) {
-      throw new Error("Jugador no encontrado.");
-    }
-
-    await db.insert(playerMedia).values({
-      playerId,
-      ...data,
-    });
-
-    revalidatePath(`/dashboard/players/${playerId}`);
+    revalidatePath("/dashboard/landing");
 
     return {
       success: true,
@@ -52,16 +39,16 @@ export const createPlayerMedia = actionClient
     };
   });
 
-export const deletePlayerMedia = actionClient
-  .metadata({ actionName: "deletePlayerMedia" })
-  .inputSchema(deletePlayerMediaSchema, {
+export const deleteLandingMedia = actionClient
+  .metadata({ actionName: "deleteLandingMedia" })
+  .inputSchema(deleteLandingMediaSchema, {
     handleValidationErrorsShape: async (errors) => {
       return flattenValidationErrors(errors).fieldErrors;
     },
   })
   .action(async ({ parsedInput }) => {
-    const mediaToDelete = await db.query.playerMedia.findFirst({
-      where: eq(playerMedia.id, parsedInput.id),
+    const mediaToDelete = await db.query.landingMedia.findFirst({
+      where: eq(landingMedia.id, parsedInput.id),
     });
 
     if (!mediaToDelete) {
@@ -77,9 +64,9 @@ export const deletePlayerMedia = actionClient
       throw new Error("No se pudo eliminar el archivo en almacenamiento.");
     }
 
-    await db.delete(playerMedia).where(eq(playerMedia.id, parsedInput.id));
+    await db.delete(landingMedia).where(eq(landingMedia.id, parsedInput.id));
 
-    revalidatePath(`/dashboard/players/${mediaToDelete.playerId}`);
+    revalidatePath("/dashboard/landing");
 
     return {
       success: true,

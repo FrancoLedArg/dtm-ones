@@ -5,11 +5,17 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "production", "test"]),
     DATABASE_URL: z.url(),
+    BETTER_AUTH_SECRET: z.string().min(32),
+    BETTER_AUTH_URL: z.url(),
+    DEV_SEED_ADMIN_EMAIL: z.email(),
+    DEV_SEED_ADMIN_PASSWORD: z.string().min(8),
+    DEV_SEED_ADMIN_NAME: z.string().min(1),
   },
 
   client: {
     NEXT_PUBLIC_SUPABASE_URL: z.url(),
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(1),
+    NEXT_PUBLIC_BETTER_AUTH_URL: z.url(),
   },
 
   /**
@@ -20,6 +26,7 @@ export const env = createEnv({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_BETTER_AUTH_URL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL,
   },
 
   emptyStringAsUndefined: true,

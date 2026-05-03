@@ -18,5 +18,9 @@ export const createPlayerMediaSchema = playerMediaSchema.pick({
   storagePath: true,
 });
 
+export const deletePlayerMediaSchema = playerMediaSchema.pick({
+  id: true,
+});
+
 export type PlayerMediaData = z.infer<typeof playerMediaSchema>;
 export type CreatePlayerMediaData = z.infer<typeof createPlayerMediaSchema>;

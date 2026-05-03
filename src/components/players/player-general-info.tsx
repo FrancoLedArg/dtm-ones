@@ -24,6 +24,7 @@ import { type CategoryData } from "@/lib/validation/categories";
 // Shadcn
 import { FieldGroup } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -110,24 +111,28 @@ export default function PlayerGeneralInfo({
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
-        <FieldGroup>
-          <TextField name="fullName" label="Nombre completo" />
-          <TextField name="dateOfBirth" label="Fecha de nacimiento" />
-          <TextField name="nationality" label="Nacionalidad" />
-          <TextField name="height" label="Altura" />
-          <TextField name="lastClub" label="Último club" />
-          <OptionsField
-            name="playerCategories"
-            label="Categorías"
-            options={categories}
-          />
-        </FieldGroup>
-        <SubmitButton label="Guardar cambios" isExecuting={isExecuting} />
-      </form>
+      <Card>
+        <CardContent>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
+            <FieldGroup>
+              <TextField name="fullName" label="Nombre completo" />
+              <TextField name="dateOfBirth" label="Fecha de nacimiento" />
+              <TextField name="nationality" label="Nacionalidad" />
+              <TextField name="height" label="Altura" />
+              <TextField name="lastClub" label="Último club" />
+              <OptionsField
+                name="playerCategories"
+                label="Categorías"
+                options={categories}
+              />
+            </FieldGroup>
+            <SubmitButton label="Guardar cambios" isExecuting={isExecuting} />
+          </form>
+        </CardContent>
+      </Card>
     </FormProvider>
   );
 }

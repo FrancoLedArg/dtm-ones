@@ -35,7 +35,10 @@ export default function Page() {
   return (
     <ReactLenis root options={{ lerp: 0.05 }}>
       <main className={styles.main}>
+        {/*
         <AnimatePresence mode="wait">{isLoading && <Loader />}</AnimatePresence>
+
+        */}
 
         <Hero />
         <About />

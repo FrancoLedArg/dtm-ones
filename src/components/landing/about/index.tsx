@@ -3,10 +3,6 @@
 // Styles
 import styles from "./styles.module.scss";
 
-// Components
-import Paragraph from "./paragraph";
-import Word from "./word";
-
 const content = [
   {
     index: "01",
@@ -31,17 +27,14 @@ const content = [
 export default function About() {
   return (
     <section className={styles.container}>
-      {content.map((item, index) => (
-        <div key={index} className={styles.wrapper}>
-          <div className={styles.item}>
-            <div className={styles.header}>
-              <span className={styles.index}>{item.index}</span>
-              <h2 className={styles.title}>{item.title}</h2>
-            </div>
-
-            <Paragraph value={item.description} />
+      {content.map((item) => (
+        <article key={item.index} className={styles.item}>
+          <span className={styles.item_index}>{item.index}</span>
+          <div className={styles.item_content}>
+            <h2 className={styles.item_title}>{item.title}</h2>
+            <p className={styles.item_description}>{item.description}</p>
           </div>
-        </div>
+        </article>
       ))}
     </section>
   );

@@ -8,9 +8,11 @@ import { get } from "react-hook-form";
 export default function PasswordField({
   name,
   label,
+  disabled,
 }: {
   name: string;
   label: string;
+  disabled?: boolean;
 }) {
   const {
     register,
@@ -28,6 +30,7 @@ export default function PasswordField({
         id={name}
         placeholder={label}
         autoComplete="off"
+        disabled={disabled}
         {...register(name, {
           onChange: async () => {
             await trigger(name);

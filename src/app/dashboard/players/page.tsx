@@ -12,7 +12,14 @@ import { players, playerCategories } from "@/lib/db/schema";
 import { and, desc, eq, exists, ilike } from "drizzle-orm";
 
 // Shadcn
-import { ItemGroup, Item, ItemTitle } from "@/components/ui/item";
+import {
+  ItemGroup,
+  Item,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@/components/ui/item";
+import { Badge } from "@/components/ui/badge";
 import {
   Empty,
   EmptyContent,
@@ -35,34 +42,36 @@ export default async function Page({
 
   const raw = c === undefined ? [] : Array.isArray(c) ? c : [c];
 
-  const categoriesArray = [
-    ...new Set(
-      raw.map((s) => Number(s)).filter((n) => Number.isInteger(n) && n > 0),
-    ),
-  ];
+  const uuidRegex =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  const categoriesArray = [...new Set(raw.filter((id) => uuidRegex.test(id)))];
 
-  const allPlayers = await db
-    .select()
-    .from(players)
-    .where(
-      and(
-        ilike(players.fullName, `%${q?.trim() ?? ""}%`),
-        ...categoriesArray.map((categoryId) =>
-          exists(
-            db
-              .select({ id: playerCategories.playerId })
-              .from(playerCategories)
-              .where(
-                and(
-                  eq(playerCategories.playerId, players.id),
-                  eq(playerCategories.categoryId, categoryId),
-                ),
+  const allPlayers = await db.query.players.findMany({
+    where: and(
+      ilike(players.fullName, `%${q?.trim() ?? ""}%`),
+      ...categoriesArray.map((categoryId) =>
+        exists(
+          db
+            .select({ id: playerCategories.playerId })
+            .from(playerCategories)
+            .where(
+              and(
+                eq(playerCategories.playerId, players.id),
+                eq(playerCategories.categoryId, categoryId),
               ),
-          ),
+            ),
         ),
       ),
-    )
-    .orderBy(desc(players.createdAt));
+    ),
+    orderBy: [desc(players.createdAt)],
+    with: {
+      playerCategories: {
+        with: {
+          category: true, // <- incluye id, name, etc.
+        },
+      },
+    },
+  });
 
   const allCategories = await db.query.categories.findMany();
 
@@ -95,8 +104,22 @@ export default async function Page({
         ) : (
           allPlayers.map((player) => (
             <Item key={player.id} variant="muted" asChild>
-              <Link href={`/dashboard/players/${player.id}`}>
-                <ItemTitle>{player.fullName}</ItemTitle>
+              <Link
+                href={`/dashboard/players/${player.id}`}
+                className="w-full flex items-start justify-between gap-4"
+              >
+                <ItemContent>
+                  <ItemTitle>{player.fullName}</ItemTitle>
+                  <ItemDescription>
+                    Last club: {player.lastClub} - Birth date:{" "}
+                    {player.dateOfBirth}
+                  </ItemDescription>
+                </ItemContent>
+                <div className="flex flex-wrap items-center justify-end gap-2">
+                  {player.playerCategories.map(({ category }) => (
+                    <Badge key={category.id}>{category.name}</Badge>
+                  ))}
+                </div>
               </Link>
             </Item>
           ))

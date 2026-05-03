@@ -15,12 +15,32 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { UsersIcon, HouseIcon, FolderIcon } from "@phosphor-icons/react";
+import {
+  BrowsersIcon,
+  FolderIcon,
+  HouseIcon,
+  UserGearIcon,
+  UsersIcon,
+} from "@phosphor-icons/react";
 
 // Components
 import { NavUser } from "@/components/dashboard/nav-user";
 
-const menuItems = [
+type MenuItem = {
+  title: string;
+  url: string;
+  icon: React.ComponentType<{ className?: string }>;
+};
+
+const landingItems: MenuItem[] = [
+  {
+    title: "Content",
+    url: "/dashboard/landing",
+    icon: BrowsersIcon,
+  },
+];
+
+const playersItems: MenuItem[] = [
   {
     title: "Players",
     url: "/dashboard/players",
@@ -33,9 +53,47 @@ const menuItems = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+const usersItems: MenuItem[] = [
+  {
+    title: "Manage users",
+    url: "/dashboard/users",
+    icon: UserGearIcon,
+  },
+];
+
+function isItemActive(pathname: string, url: string) {
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
+function NavGroup({ label, items }: { label: string; items: MenuItem[] }) {
   const pathname = usePathname();
 
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          {items.map((item) => (
+            <SidebarMenuItem key={item.url}>
+              <SidebarMenuButton
+                asChild
+                isActive={isItemActive(pathname, item.url)}
+                tooltip={item.title}
+              >
+                <Link href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  );
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="offExamples" {...props}>
       <SidebarHeader>
@@ -49,27 +107,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={pathname === item.url}
-                    tooltip={item.title}
-                  >
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavGroup label="Landing Page Content" items={landingItems} />
+        <NavGroup label="Players Content" items={playersItems} />
+        <NavGroup label="Users" items={usersItems} />
       </SidebarContent>
       <SidebarRail />
       <SidebarContent>

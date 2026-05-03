@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Components
 import PlayerGeneralInfo from "@/components/players/player-general-info";
-import PlayerMediaManager from "@/components/players/player-media-manager";
+import PlayerMedia from "@/components/players/player-media";
 
 export default function PlayerProfileTabs({
   player,
@@ -28,7 +28,7 @@ export default function PlayerProfileTabs({
         <PlayerGeneralInfo player={player} categories={categories} />
       </TabsContent>
       <TabsContent value="player-media">
-        <PlayerMediaManager playerId={player.id} files={player.playerMedia} />
+        <PlayerMedia player={player} />
       </TabsContent>
     </Tabs>
   );

@@ -10,19 +10,13 @@ import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 // Schema
-import {
-  players,
-  playerCategories,
-  categories,
-  playerMedia,
-} from "@/lib/db/schema";
+import { players, playerCategories, categories } from "@/lib/db/schema";
 
 // Validation Schema
 import {
   createPlayerSchema,
   updatePlayerSchema,
 } from "@/lib/validation/players";
-import { createPlayerMediaSchema } from "@/lib/validation/player-media";
 
 export const createPlayer = actionClient
   .metadata({ actionName: "createPlayer" })

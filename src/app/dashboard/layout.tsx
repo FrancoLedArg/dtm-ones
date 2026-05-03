@@ -2,7 +2,7 @@
 import { redirect } from "next/navigation";
 
 // Supabase
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getSession } from "@/utils/get-session";
 
 // Components
 import { AppSidebar } from "@/components/dashboard/app-sidebar";
@@ -16,12 +16,9 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const session = await getSession();
 
-  if (!user) {
+  if (!session?.user) {
     redirect("/auth/signin");
   }
 

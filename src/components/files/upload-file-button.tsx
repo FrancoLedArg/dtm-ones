@@ -17,10 +17,12 @@ import { UploadIcon } from "@phosphor-icons/react";
 export default function UploadFileButton({
   file,
   namespace,
+  disabled = false,
   onSuccess,
 }: {
   file: File | null;
   namespace: string;
+  disabled?: boolean;
   onSuccess: (data: { id: string; path: string; fullPath?: string }) => void;
 }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -55,7 +57,7 @@ export default function UploadFileButton({
   return (
     <Button
       variant="outline"
-      disabled={!file || isUploading}
+      disabled={!file || isUploading || disabled}
       onClick={() => file && handleClick(file)}
       className="relative"
     >

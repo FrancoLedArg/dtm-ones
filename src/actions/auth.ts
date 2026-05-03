@@ -1,14 +1,15 @@
 "use server";
 
 // Next
+import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 
 // Safe Action
 import { actionClient } from "@/lib/safe-action";
 import { flattenValidationErrors } from "next-safe-action";
 
-// Supabase
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+// Better Auth
+import { auth } from "@/lib/auth/auth";
 
 // Validation Schema
 import { signInSchema } from "@/lib/validation/auth";
@@ -21,17 +22,12 @@ export const signIn = actionClient
     },
   })
   .action(async ({ parsedInput }) => {
-    const supabase = await createSupabaseServerClient();
+    const { email, password } = parsedInput;
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: parsedInput.email,
-      password: parsedInput.password,
+    await auth.api.signInEmail({
+      body: { email, password },
     });
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
     revalidatePath("/", "layout");
-    return { message: "Inicio de sesión exitoso." };
+    return { message: "Signed in successfully." };
   });
