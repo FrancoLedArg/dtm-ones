@@ -31,7 +31,6 @@ const images = [
 ];
 
 const MOBILE_MAX = 768;
-const MOBILE_PARALLAX_SCALE = 0.45;
 
 export default function Roster() {
   const container = useRef(null);
@@ -41,29 +40,10 @@ export default function Roster() {
     offset: ["start end", "end start"],
   });
 
-  const parallaxScale =
-    width > 0 && width <= MOBILE_MAX ? MOBILE_PARALLAX_SCALE : 1;
-
-  const y = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, height * 2 * parallaxScale],
-  );
-  const y2 = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, height * 3.3 * parallaxScale],
-  );
-  const y3 = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, height * 1.25 * parallaxScale],
-  );
-  const y4 = useTransform(
-    scrollYProgress,
-    [0, 1],
-    [0, height * 3 * parallaxScale],
-  );
+  const y = useTransform(scrollYProgress, [0, 1], [0, height * 2]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, height * 3.3]);
+  const y3 = useTransform(scrollYProgress, [0, 1], [0, height * 1.25]);
+  const y4 = useTransform(scrollYProgress, [0, 1], [0, height * 3]);
 
   return (
     <section className={styles.section}>
