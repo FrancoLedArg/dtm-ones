@@ -13,7 +13,7 @@ import { motion, MotionValue, useTransform, useScroll } from "motion/react";
 import { useDimension } from "@/hooks/use-dimension";
 
 // Styles
-import styles from "./clients.module.scss";
+import styles from "./styles.module.scss";
 
 const images = [
   "/assets/images/1.jpeg",
@@ -30,7 +30,7 @@ const images = [
   "/assets/images/12.png",
 ];
 
-export default function Clients() {
+export default function Roster() {
   const container = useRef(null);
   const { height } = useDimension();
   const { scrollYProgress } = useScroll({
@@ -62,7 +62,7 @@ function Column({ images, y }: { images: string[]; y: MotionValue<number> }) {
     <motion.div style={{ y }} className={styles.column}>
       {images.map((src, index) => (
         <div key={index} className={styles.imageContainer}>
-          <Image src={src} alt={src} fill loading="eager" priority />
+          <Image src={src} alt={src} fill />
         </div>
       ))}
     </motion.div>

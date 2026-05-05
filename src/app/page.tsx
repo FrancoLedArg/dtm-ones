@@ -14,7 +14,7 @@ import Loader from "@/components/landing/loader";
 // import Header from "@/components/landing/header";
 import Hero from "@/components/landing/hero";
 import About from "@/components/landing/about";
-import Clients from "@/components/landing/clients";
+import Roster from "@/components/landing/roster";
 import Contact from "@/components/landing/contact";
 import Footer from "@/components/landing/footer";
 
@@ -42,7 +42,7 @@ export default function Page() {
         */}
 
         <About />
-        <Clients />
+        <Roster />
         <Contact />
         <Footer />
       </main>
