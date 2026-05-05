@@ -7,7 +7,13 @@ import Image from "next/image";
 import { useRef } from "react";
 
 // Motion
-import { motion, MotionValue, useTransform, useScroll } from "motion/react";
+import {
+  motion,
+  MotionValue,
+  useTransform,
+  useScroll,
+  useSpring,
+} from "motion/react";
 
 // Hooks
 import { useDimension } from "@/hooks/use-dimension";
@@ -39,11 +45,17 @@ export default function Roster() {
     target: container,
     offset: ["start end", "end start"],
   });
+  const scrollYSpring = useSpring(scrollYProgress, {
+    stiffness: 120,
+    damping: 40,
+    mass: 0.35,
+    restDelta: 0.0005,
+  });
 
-  const y = useTransform(scrollYProgress, [0, 1], [0, height * 2]);
-  const y2 = useTransform(scrollYProgress, [0, 1], [0, height * 3.3]);
-  const y3 = useTransform(scrollYProgress, [0, 1], [0, height * 1.25]);
-  const y4 = useTransform(scrollYProgress, [0, 1], [0, height * 3]);
+  const y = useTransform(scrollYSpring, [0, 1], [0, height * 2]);
+  const y2 = useTransform(scrollYSpring, [0, 1], [0, height * 3.3]);
+  const y3 = useTransform(scrollYSpring, [0, 1], [0, height * 1.25]);
+  const y4 = useTransform(scrollYSpring, [0, 1], [0, height * 3]);
 
   return (
     <section className={styles.section}>
