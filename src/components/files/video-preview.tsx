@@ -8,7 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 // Utils
 import { cn } from "@/lib/utils";
-import DeleteFileButton from "@/components/supabase/delete-file-button";
+import DeleteFileButton from "@/components/files/delete-file-button";
 
 const DEFAULT_BUCKET = "public-assets";
 
@@ -48,7 +48,10 @@ export default function VideoPreview({
         src={src}
         controls
         preload="metadata"
-        className={cn("w-full rounded-md border bg-black object-contain", className)}
+        className={cn(
+          "w-full rounded-md border bg-black object-contain",
+          className,
+        )}
       />
     </div>
   );

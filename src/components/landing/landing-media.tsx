@@ -7,15 +7,18 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
 // Actions
-import { createLandingMedia, deleteLandingMedia } from "@/actions/landing-media";
+import {
+  createLandingMedia,
+  deleteLandingMedia,
+} from "@/actions/landing-media";
 
 // Types
 import type { LandingMediaData } from "@/lib/validation/landing-media";
 
 // Components
-import FileField from "@/components/supabase/file-field";
-import ImagePreview from "@/components/supabase/image-preview";
-import VideoPreview from "@/components/supabase/video-preview";
+import FileField from "@/components/files/file-field";
+import ImagePreview from "@/components/files/image-preview";
+import VideoPreview from "@/components/files/video-preview";
 import {
   Card,
   CardContent,
@@ -84,8 +87,8 @@ export default function LandingMedia({
                 </EmptyMedia>
                 <EmptyTitle>No hero video yet</EmptyTitle>
                 <EmptyDescription>
-                  Upload a short clip for the landing hero so visitors see motion
-                  above the fold.
+                  Upload a short clip for the landing hero so visitors see
+                  motion above the fold.
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>

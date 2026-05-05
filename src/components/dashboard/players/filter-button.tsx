@@ -7,7 +7,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useMemo } from "react";
 
 // Types
-import { Category } from "@/lib/validation/categories";
+import { type CategoryData } from "@/lib/validation/categories";
 
 // Shadcn
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 export default function FilterButton({
   categories,
 }: {
-  categories: Category[];
+  categories: CategoryData[];
 }) {
   const { replace } = useRouter();
   const pathname = usePathname();

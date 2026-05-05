@@ -13,9 +13,9 @@ import { createPlayerMedia, deletePlayerMedia } from "@/actions/player-media";
 import type { PlayerData } from "@/lib/validation/players";
 
 // Components
-import FileField from "@/components/supabase/file-field";
-import ImagePreview from "@/components/supabase/image-preview";
-import VideoPreview from "@/components/supabase/video-preview";
+import FileField from "@/components/files/file-field";
+import ImagePreview from "@/components/files/image-preview";
+import VideoPreview from "@/components/files/video-preview";
 import {
   Card,
   CardContent,

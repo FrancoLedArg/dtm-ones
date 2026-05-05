@@ -34,7 +34,7 @@ export const createContactRequest = actionClient
       message: "Tu mensaje se envió correctamente.",
     };
   });
-
+/*
 export const deleteContactRequest = actionClient
   .metadata({ actionName: "deleteContactRequest" })
   .inputSchema(getContactRequestSchema, {
@@ -60,3 +60,4 @@ export const deleteContactRequest = actionClient
       message: "Solicitud de contacto eliminada correctamente.",
     };
   });
+*/

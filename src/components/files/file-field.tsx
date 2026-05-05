@@ -12,7 +12,7 @@ import { Field, FieldDescription } from "@/components/ui/field";
 import { toast } from "sonner";
 
 // Components
-import UploadFileButton from "@/components/supabase/upload-file-button";
+import UploadFileButton from "@/components/files/upload-file-button";
 
 // Phosphor
 import { InfoIcon } from "@phosphor-icons/react";
